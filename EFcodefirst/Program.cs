@@ -1,4 +1,6 @@
+using EFcodefirst.DAL;
 using EFcodefirst.Middlewares;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
@@ -9,10 +11,18 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-
+        
+        string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+        
+        
         // Add services to the container.
         builder.Services.AddAuthorization();
         builder.Services.AddControllers();
+        builder.Services.AddDbContext<PrescriptionDbContext>(opt =>
+        {
+            opt.UseSqlServer(connectionString);
+        });
+        
         
         //registering dependencies
         /*builder.Services.AddScoped<ITripsService, TripsService>();
