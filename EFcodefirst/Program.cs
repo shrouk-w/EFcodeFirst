@@ -19,9 +19,12 @@ public class Program
         // Add services to the container.
         builder.Services.AddAuthorization();
         builder.Services.AddControllers();
+        
         builder.Services.AddDbContext<PrescriptionDbContext>(opt =>
         {
-            opt.UseSqlServer(connectionString);
+            opt.UseSqlServer(connectionString)
+                .EnableSensitiveDataLogging()
+                .LogTo(Console.WriteLine, LogLevel.Information);
         });
         
         
