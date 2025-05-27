@@ -78,4 +78,56 @@ public class PrescriptionService : IPrescriptionService
         await _dbContext.SaveChangesAsync();
 
     }
+
+    public async Task<PrescriptionsForClientReplyDTO> GetPrescriptionsAsync(int idPatient, CancellationToken token)
+    {
+        var patient = await _dbContext.Patient.FindAsync(idPatient, token);
+        if (patient == null)
+            throw new NotFoundException("Patient not found");
+        
+        var pre = new PrescriptionsForClientReplyDTO()
+        {
+            IdPatient = idPatient,
+            FirstName = patient.FirstName,
+            LastName = patient.LastName,
+            BirthDate = patient.BirthDate,
+        };  
+        List<PrescriptionDTO> prescriptions = new List<PrescriptionDTO>();
+
+        var presriptions = await _dbContext.Prescription.Where(p => p.IdPatient == idPatient).ToListAsync(token);
+
+        foreach (var pres in presriptions)
+        {
+            List<MedicamentDTO> medicaments = new List<MedicamentDTO>();
+            var pres_medicament = await _dbContext.Prescription_Medicament.Where(m => m.IdPrescription == pres.IdPrescription).ToListAsync(token);
+            foreach (var medi in pres_medicament)
+            {
+                var medicament = await _dbContext.Medicament.FindAsync(medi.IdMedicament, token);
+                medicaments.Add(new MedicamentDTO()
+                {
+                    Description = medicament.Description,
+                    Dose = medi.Dose,
+                    Name = medicament.Name,
+                    IdMedicament = medi.IdMedicament
+                });
+            }
+            var doc = await _dbContext.Doctor.FindAsync(pres.IdDoctor, token);
+            var presc = new PrescriptionDTO()
+            {
+                IdPrescription = pres.IdPrescription,
+                DueDate = pres.DueDate,
+                Date = pres.Date,
+                Medicaments = medicaments,
+                Doctor = new DoctorDTO()
+                {
+                    IdDoctor = doc.IdDoctor,
+                    FirstName = doc.FirstName,
+                }
+            };
+            prescriptions.Add(presc);
+        }
+        pre.Prescriptions = prescriptions;
+        
+        return pre;
+    }
 }

@@ -23,4 +23,11 @@ public class PrescriptionController : ControllerBase
         _prescriptionService.InsertNewPresriptionsAsync(prescription, token);
         return Ok();
     }
+
+    [HttpGet("/{IdPatient}")]
+    public async Task<IActionResult> GetPrescriptionsAsync(int IdPatient, CancellationToken token)
+    {
+        _prescriptionService.GetPrescriptionsAsync(IdPatient, token);
+        return Ok();
+    }
 }
