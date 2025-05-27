@@ -27,7 +27,7 @@ public class PrescriptionController : ControllerBase
     [HttpGet("/{IdPatient}")]
     public async Task<IActionResult> GetPrescriptionsAsync(int IdPatient, CancellationToken token)
     {
-        _prescriptionService.GetPrescriptionsAsync(IdPatient, token);
-        return Ok();
+        var response = await _prescriptionService.GetPrescriptionsAsync(IdPatient, token);
+        return Ok(response);
     }
 }
