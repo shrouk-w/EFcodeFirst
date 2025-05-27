@@ -1,5 +1,6 @@
 using EFcodefirst.DAL;
 using EFcodefirst.Middlewares;
+using EFcodefirst.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerUI;
@@ -25,10 +26,8 @@ public class Program
         
         
         //registering dependencies
-        /*builder.Services.AddScoped<ITripsService, TripsService>();
-        builder.Services.AddScoped<ITripsRepository, TripsRepository>();
-        builder.Services.AddScoped<IClientsService, ClientsService>();
-        builder.Services.AddScoped<IClientsRepository, ClientsRepository>();*/
+        builder.Services.AddScoped<IPrescriptionService, PrescriptionService>();
+        
         
 
         builder.Services.AddSwaggerGen(c =>
