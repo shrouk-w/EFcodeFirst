@@ -5,7 +5,9 @@ namespace EFcodefirst.DAL;
 
 public class PrescriptionDbContext : DbContext
 {
-    public DbSet<Medicament> Medicaments { get; set; }
+    public DbSet<Medicament> Medicament { get; set; }
+    public DbSet<Prescription_Medicament> Prescription_Medicament { get; set; }
+    public DbSet<Prescription> Prescription { get; set; }
 
     protected PrescriptionDbContext()
     {
@@ -13,5 +15,12 @@ public class PrescriptionDbContext : DbContext
 
     public PrescriptionDbContext(DbContextOptions options) : base(options)
     {
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Prescription_Medicament>()
+            .HasKey(p => new { p.IdMedicament, p.IdPrescription });
+        
     }
 }
